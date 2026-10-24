@@ -121,12 +121,6 @@ The inbound network rules used to control access to the EC2 instance.
 
 SSH access should be restricted to trusted source IP addresses. HTTP traffic is permitted on port `80`.
 
-### 4. Nginx and Gunicorn Service Status
-
-![Nginx and Gunicorn systemd status](./screenshots/Nginx and Gunicorn status.png)
-
-Service status evidence for Nginx and the Gunicorn application service.
-
 ## Network Configuration
 
 | Component | Port / Address | Purpose |

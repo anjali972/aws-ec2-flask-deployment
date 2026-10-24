@@ -123,7 +123,7 @@ SSH access should be restricted to trusted source IP addresses. HTTP traffic is 
 
 ### 4. Nginx and Gunicorn Service Status
 
-![Nginx and Gunicorn Status](screenshots/Nginx and Gunicorn Status.png)
+![Nginx and Gunicorn systemd status](./screenshots/Nginx and Gunicorn status.png)
 
 Service status evidence for Nginx and the Gunicorn application service.
 

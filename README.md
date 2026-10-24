@@ -81,4 +81,116 @@ The application server listens on the local loopback interface at port `8000`:
 gunicorn --workers 2 --bind 127.0.0.1:8000 app:app
 ```
 
-Binding
+Binding to `127.0.0.1` prevents direct public access to the Gunicorn listener.
+
+### 3. Nginx Reverse Proxy
+
+Nginx listens for incoming HTTP requests on port `80` and forwards them to Gunicorn.
+
+This separates public HTTP request handling from application execution and provides a clear boundary between the reverse proxy and the application server.
+
+### 4. systemd Service Management
+
+The service configuration is stored in `systemd/mysite.service`.
+
+It defines the service user, application working directory, Gunicorn startup command, and restart behavior.
+
+This allows the application service to be managed through systemd rather than requiring Gunicorn to be started manually in an interactive terminal.
+
+## Deployment Evidence
+
+The following screenshots document the deployed environment and its configuration.
+
+### 1. Live Website
+
+![Deployed Flask Website](screenshots/website.png)
+
+The deployed application accessed through the EC2 public address.
+
+### 2. EC2 Instance
+
+![EC2 Instance](screenshots/ec2-instance.png)
+
+Evidence of the EC2 instance used to host the application.
+
+### 3. Security Group Configuration
+
+![Security Group Inbound Rules](screenshots/security-group-inbound-rules.png)
+
+The inbound network rules used to control access to the EC2 instance.
+
+SSH access should be restricted to trusted source IP addresses. HTTP traffic is permitted on port `80`.
+
+### 4. Nginx and Gunicorn Service Status
+
+![Nginx and Gunicorn Status](screenshots/systemctl-nginx-and-gunicorn.png)
+
+Service status evidence for Nginx and the Gunicorn application service.
+
+## Network Configuration
+
+| Component | Port / Address | Purpose |
+|---|---|---|
+| Nginx | `80` | Receives public HTTP requests |
+| Gunicorn | `127.0.0.1:8000` | Processes application requests locally |
+| SSH | `22` | Remote server administration |
+| HTTPS | `443` | Future enhancement; HTTPS is not yet configured |
+
+Port `8000` should not be opened to the public internet because Nginx communicates with Gunicorn over the local interface.
+
+## Validation and Troubleshooting
+
+The following commands can be used to inspect the deployment.
+
+Check Nginx:
+
+```bash
+sudo systemctl status nginx --no-pager
+```
+
+Check the Gunicorn application service:
+
+```bash
+sudo systemctl status mysite --no-pager
+```
+
+Test the local HTTP endpoint:
+
+```bash
+curl -I http://localhost
+```
+
+If the application exposes a health endpoint, test it with:
+
+```bash
+curl http://localhost/health
+```
+
+A successful HTTP response and active services provide useful evidence that the deployment is functioning correctly.
+
+## Security Considerations
+
+- Gunicorn listens on the loopback interface rather than a public network interface.
+- SSH access should be limited to trusted IP addresses.
+- The EC2 Security Group controls which inbound ports are accessible.
+- The `.gitignore` file excludes the virtual environment, private key files, and environment files.
+- Python dependencies are documented separately in `requirements.txt`.
+- Private keys, AWS credentials, and other secrets must never be committed to GitHub.
+
+**Current limitation:** The application is served over HTTP. HTTPS has not yet been configured.
+
+## Future Improvements
+
+- Connect a custom domain name.
+- Configure HTTPS using a TLS certificate and Nginx.
+- Implement structured application logging and monitoring.
+- Add automated tests for the Flask application.
+- Introduce a CI/CD pipeline for repeatable deployments.
+- Add health monitoring and operational alerts.
+- Explore infrastructure provisioning through Terraform.
+
+## Key Takeaways
+
+This project demonstrates the practical integration of cloud compute, Linux administration, reverse proxy configuration, WSGI application serving, and process management.
+
+It establishes a foundation for understanding how Python web applications are deployed and operated on AWS EC2 using components with clearly separated responsibilities.

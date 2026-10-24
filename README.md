@@ -117,6 +117,7 @@ Evidence of the EC2 instance used to host the application.
 
 ![Security Group Inbound Rules](screenshots/security-group-inbound-rules.png)
 
+
 The inbound network rules used to control access to the EC2 instance.
 
 SSH access should be restricted to trusted source IP addresses. HTTP traffic is permitted on port `80`.
